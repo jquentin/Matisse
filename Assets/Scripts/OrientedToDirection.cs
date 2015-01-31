@@ -31,7 +31,7 @@ public class OrientedToDirection : MonoBehaviour {
 		}
 		else
 		{
-			print ("immobile " + mag + " " + _lastPos + " " + mTrans.position);
+//			print ("immobile " + mag + " " + _lastPos + " " + mTrans.position);
 			//lookRot = Quaternion.LookRotation(Vector3.right);
 		}
 		mTrans.rotation = Quaternion.Slerp(mTrans.rotation, lookRot, Mathf.Clamp01(speed * Time.deltaTime));
