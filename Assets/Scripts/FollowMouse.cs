@@ -17,6 +17,8 @@ public class FollowMouse : MonoBehaviour {
 
 	void Update () 
 	{
+		if (StartOnTap.instance.transitioning)
+			return;
 #if UNITY_EDITOR
 		if(Input.GetMouseButton(0))
 		{

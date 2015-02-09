@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class ScaleTweenable : GettableComponent <ScaleTweenable> {
+	
+	public bool ignoreTimeScale = false;
 
 	public float scale { get; private set; }
 	
@@ -19,6 +21,7 @@ public class ScaleTweenable : GettableComponent <ScaleTweenable> {
 			"scale", Vector3.one * to,
 			"time", time,
 			"delay", delay,
+			"ignoretimescale", ignoreTimeScale,
 			"easetype", easeType));
 	}
 	
@@ -28,6 +31,7 @@ public class ScaleTweenable : GettableComponent <ScaleTweenable> {
 			"scale", Vector3.one * to,
 			"time", time,
 			"delay", delay,
+			"ignoretimescale", ignoreTimeScale,
 			"easetype", easeType));
 	}
 }

@@ -6,7 +6,6 @@ public class WeedCleanCheck : MonoBehaviour {
 	public GameObject character;
 
 	public List<Weed> weeds = new List<Weed>();
-//	public List<List<Weed>> weedsByColor;
 	Dictionary<Weed.Color, List<Weed>> weedsByColor;
 	public float maxDist = 1f;
 	private bool hasSucceed = false;
@@ -54,16 +53,7 @@ public class WeedCleanCheck : MonoBehaviour {
 	void Success()
 	{
 		hasSucceed = true;
-		character.GetComponent<FollowMouse>().enabled = false;
-		Camera.main.GetComponent<CameraDragger>().enabled = false;
-		Camera.main.GetComponent<CameraSizer>().enabled = false;
-		PositionTweenable.Get(Camera.main.gameObject).TweenXYPosition(Vector2.zero, 4f, 0f, iTween.EaseType.easeInOutCubic);
-		iTween.ValueTo(gameObject, iTween.Hash(
-			"from", Camera.main.orthographicSize,
-			"to", 6f,
-			"time", 6f,
-			"onupdate", "UpdateCameraSize",
-			"easetype", iTween.EaseType.easeInOutCubic));
+		StartOnTap.instance.SetState(StartOnTap.State.View);
 	}
 
 	void UpdateCameraSize(float value)

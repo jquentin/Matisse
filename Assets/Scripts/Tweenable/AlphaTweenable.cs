@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class AlphaTweenable : GettableComponent<AlphaTweenable> {
+	
+	public bool ignoreTimeScale = false;
 
 	private SpriteRenderer[] spriteRenderers;
 	private MeshRenderer[] meshRenderers;
@@ -17,7 +19,6 @@ public class AlphaTweenable : GettableComponent<AlphaTweenable> {
 	}
 	public float alpha { get; private set; }
 	public bool disableColliders = false;
-	public bool ignoreTimeScale = false;
 
 	void Awake()
 	{

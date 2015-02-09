@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ColorTweenable : GettableComponent <ColorTweenable> {
 	
+	public bool ignoreTimeScale = false;
+
 	private SpriteRenderer[] spriteRenderers;
 	private MeshRenderer[] meshRenderers;
 	public Color color { get; private set; }
@@ -23,7 +25,7 @@ public class ColorTweenable : GettableComponent <ColorTweenable> {
 		color = value;
 	}
 	
-	public void TweenColorFrom(Color from, Color to, float time, float delay = 0f, iTween.EaseType easeType = iTween.EaseType.easeOutExpo)
+	public void TweenColorFrom(Color from, Color to, float time, float delay = 0f, iTween.EaseType easeType = iTween.EaseType.easeOutExpo, bool ignoreTimeScale = false)
 	{
 		iTween.ValueTo(gameObject, iTween.Hash(
 			"from", from,
@@ -31,10 +33,11 @@ public class ColorTweenable : GettableComponent <ColorTweenable> {
 			"time", time,
 			"delay", delay,
 			"onupdate", "UpdateColor",
+			"ignoretimescale", ignoreTimeScale,
 			"easetype", easeType));
 	}
 	
-	public void TweenColor(Color to, float time, float delay = 0f, iTween.EaseType easeType = iTween.EaseType.easeOutExpo)
+	public void TweenColor(Color to, float time, float delay = 0f, iTween.EaseType easeType = iTween.EaseType.easeOutExpo, bool ignoreTimeScale = false)
 	{
 		iTween.ValueTo(gameObject, iTween.Hash(
 			"from", color,
@@ -42,6 +45,7 @@ public class ColorTweenable : GettableComponent <ColorTweenable> {
 			"time", time,
 			"delay", delay,
 			"onupdate", "UpdateColor",
+			"ignoretimescale", ignoreTimeScale,
 			"easetype", easeType));
 	}
 }
