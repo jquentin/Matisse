@@ -21,7 +21,7 @@ public class StartOnTap : MonoBehaviour {
 
 	public void SetState(State value, float timeCamTransition = 6f, bool forced = false)
 	{
-		if (!forced && (value == currentState || transitioning))
+		if (!forced && (value == currentState || transitioning || gameEnded))
 			return;
 		if (value == State.View)
 		{
@@ -71,6 +71,7 @@ public class StartOnTap : MonoBehaviour {
 	private float origTimeScale;
 
 	public GameObject introText;
+	private bool gameEnded = false;
 
 	void Awake()
 	{
@@ -101,6 +102,11 @@ public class StartOnTap : MonoBehaviour {
 		{
 			SetState(State.View, 3f);
 		}
+	}
+
+	public void EndGame()
+	{
+		gameEnded = true;
 	}
 
 }

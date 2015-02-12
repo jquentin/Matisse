@@ -5,20 +5,22 @@ public class WeedCleanCheck : MonoBehaviour {
 
 	public GameObject character;
 
-	public List<Weed> weeds = new List<Weed>();
-	Dictionary<Weed.Color, List<Weed>> weedsByColor;
+	public List<Sortable> weeds = new List<Sortable>();
+	Dictionary<int, List<Sortable>> weedsByColor;
 	public float maxDist = 1f;
 	private bool hasSucceed = false;
+	public GameObject textEnd;
 
 	void Start()
 	{
-		weedsByColor = new Dictionary<Weed.Color, List<Weed>>();
-		foreach(Weed w in weeds)
+		textEnd.SetActive(false);
+		weedsByColor = new Dictionary<int, List<Sortable>>();
+		foreach(Sortable w in weeds)
 		{
-			if(weedsByColor.ContainsKey(w.color))
-			   weedsByColor[w.color].Add(w);
+			if(weedsByColor.ContainsKey(w.sortId))
+			   weedsByColor[w.sortId].Add(w);
 			else
-				weedsByColor.Add(w.color, new List<Weed>(new Weed[]{w}));
+				weedsByColor.Add(w.sortId, new List<Sortable>(new Sortable[]{w}));
 		}
 	}
 
@@ -26,7 +28,7 @@ public class WeedCleanCheck : MonoBehaviour {
 	{
 		if (hasSucceed)
 			return;
-		foreach(List<Weed> c in weedsByColor.Values)
+		foreach(List<Sortable> c in weedsByColor.Values)
 		{
 			if(ExistsTooFar(c))
 				return;
@@ -34,7 +36,7 @@ public class WeedCleanCheck : MonoBehaviour {
 		Success();
 	}
 
-	bool ExistsTooFar(List<Weed> weeds)
+	bool ExistsTooFar(List<Sortable> weeds)
 	{
 		for (int i = 0 ; i < weeds.Count ; i++)
 		{
@@ -54,6 +56,8 @@ public class WeedCleanCheck : MonoBehaviour {
 	{
 		hasSucceed = true;
 		StartOnTap.instance.SetState(StartOnTap.State.View);
+		StartOnTap.instance.EndGame();
+		textEnd.SetActive(true);
 	}
 
 	void UpdateCameraSize(float value)
