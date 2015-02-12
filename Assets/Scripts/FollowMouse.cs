@@ -19,7 +19,7 @@ public class FollowMouse : MonoBehaviour {
 	{
 		if (StartOnTap.instance.transitioning)
 			return;
-#if UNITY_EDITOR
+#if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBPLAYER
 		if(Input.GetMouseButton(0))
 		{
 			Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
@@ -75,7 +75,7 @@ public class FollowMouse : MonoBehaviour {
 		{
 			GetComponent<Rigidbody>().velocity = Vector3.zero;
 		}
-//#else
+#else
 
 		if(Input.touchCount > 0)
 		{
