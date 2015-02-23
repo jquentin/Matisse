@@ -27,13 +27,21 @@ public class WeedCleanCheck : MonoBehaviour {
 	void Update ()
 	{
 		if (hasSucceed)
-			return;
-		foreach(List<Sortable> c in weedsByColor.Values)
 		{
-			if(ExistsTooFar(c))
-				return;
+			if (Input.GetMouseButtonDown(0))
+			{
+				Application.LoadLevel(0);
+			}
 		}
-		Success();
+		else
+		{
+			foreach(List<Sortable> c in weedsByColor.Values)
+			{
+				if(ExistsTooFar(c))
+					return;
+			}
+			Success();
+		}
 	}
 
 	bool ExistsTooFar(List<Sortable> weeds)
@@ -69,6 +77,6 @@ public class WeedCleanCheck : MonoBehaviour {
 	void FillWithChildren()
 	{
 		weeds.Clear();
-		weeds.AddRange(GetComponentsInChildren<Weed>());
+		weeds.AddRange(GetComponentsInChildren<Sortable>());
 	}
 }
