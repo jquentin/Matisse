@@ -95,6 +95,10 @@ public class StartOnTap : MonoBehaviour {
 		{
 			SetState(State.Play);
 		}
+		if (gameEnded && (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began || Input.GetMouseButtonDown(0)))
+		{
+			Application.LoadLevel("title");
+		}
 	}
 
 	void HandleOnClickViewButton()
