@@ -33,6 +33,7 @@ public class StartOnTap : MonoBehaviour {
 			PositionTweenable.Get(gameObject).TweenXYPosition(Vector2.zero, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
 			SizeTweenable.Get(gameObject).TweenSize(sizeCamView, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
 			viewButton.gameObject.SetActive(false);
+			menuButton.gameObject.SetActive(true);
 		}
 		else if (value == State.Play)
 		{
@@ -44,6 +45,7 @@ public class StartOnTap : MonoBehaviour {
 			character.SetActive(true);
 			character.GetComponent<FollowMouse>().enabled = true;
 			viewButton.gameObject.SetActive(true);
+			menuButton.gameObject.SetActive(false);
 			introText.SetActive(false);
 		}
 		currentState = value;
@@ -54,6 +56,7 @@ public class StartOnTap : MonoBehaviour {
 	public float sizeCamView = 7.2f;
 	public GameObject character;
 	public Clickable viewButton;
+	public Clickable menuButton;
 	private bool _transitioning = false;
 	public bool transitioning
 	{
@@ -78,6 +81,7 @@ public class StartOnTap : MonoBehaviour {
 	{
 		origTimeScale = Time.timeScale;
 		viewButton.OnClick += HandleOnClickViewButton;
+		menuButton.OnClick += HandleOnClickMenuButton;
 	}
 
 	void Start () 
@@ -107,6 +111,11 @@ public class StartOnTap : MonoBehaviour {
 		{
 			SetState(State.View, 2f);
 		}
+	}
+
+	void HandleOnClickMenuButton()
+	{
+		Application.LoadLevel("title");
 	}
 
 	public void EndGame()
