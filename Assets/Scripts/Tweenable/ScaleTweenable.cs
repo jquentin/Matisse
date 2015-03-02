@@ -4,6 +4,9 @@ using System.Collections;
 public class ScaleTweenable : GettableComponent <ScaleTweenable> {
 	
 	public bool ignoreTimeScale = false;
+	public float defaultTime = 1f;
+	public float defaultDelay = 0f;
+	public iTween.EaseType defaultEaseType = iTween.EaseType.easeOutExpo;
 
 	public float scale { get; private set; }
 	
@@ -33,5 +36,15 @@ public class ScaleTweenable : GettableComponent <ScaleTweenable> {
 			"delay", delay,
 			"ignoretimescale", ignoreTimeScale,
 			"easetype", easeType));
+	}
+
+	public void TweenScale(float to)
+	{
+		iTween.ScaleTo(gameObject, iTween.Hash(
+			"scale", Vector3.one * to,
+			"time", defaultTime,
+			"delay", defaultDelay,
+			"ignoretimescale", ignoreTimeScale,
+			"easetype", defaultEaseType));
 	}
 }

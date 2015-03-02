@@ -2,70 +2,41 @@
 using System.Collections;
 
 public class FollowMouse : MonoBehaviour {
-	
+
+	public bool moving = false;
+
 	public float approxDistance = 0.1f;
 	public float speed = 1f;
 	private Vector3 target;
 	private bool keepTarget = false;
-	public bool handleScaleOrientation = false;
 
 	void OnCollisionEnter(Collision collision)
 	{
-		keepTarget = false;
-		GetComponent<Rigidbody>().velocity = Vector3.zero;
+		StopShip();
+	}
+	void OnCollisionStay(Collision collision)
+	{
+		StopShip();
+	}
+
+	void OnDisabled()
+	{
+		StopShip();
 	}
 
 	void Update () 
 	{
-		if (StartOnTap.instance.transitioning)
-			return;
-#if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBPLAYER
+#if UNITY_EDITOR
 		if(Input.GetMouseButton(0))
 		{
 			Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+			HeadTo(worldPoint);
 			target = worldPoint;
-			float dir = 0f;
-			if(worldPoint.x > transform.position.x)
-				dir = 1f;
-			else if(worldPoint.x < transform.position.x)
-				dir = -1f;
-			if (handleScaleOrientation && dir != 0f)
-			{
-				Vector3 scale = transform.localScale;
-				scale.x = dir;
-				transform.localScale = scale;
-			}
-			GetComponent<Rigidbody>().velocity = (worldPoint - transform.position) * speed;
-//			iTween.MoveUpdate(gameObject, iTween.Hash(
-//				"position", worldPoint,
-//				"speed", speed));
-			SendMessage("Move", SendMessageOptions.DontRequireReceiver);
 		}
 		else if (keepTarget)
 		{
-			float dir = 0f;
-			if(target.x > transform.position.x)
-				dir = 1f;
-			else if(target.x < transform.position.x)
-				dir = -1f;
-			if (handleScaleOrientation && dir != 0f)
-			{
-				Vector3 scale = transform.localScale;
-				scale.x = dir;
-				transform.localScale = scale;
-			}
-			GetComponent<Rigidbody>().velocity = (target - transform.position) * speed;
-//			iTween.MoveUpdate(gameObject, iTween.Hash(
-//				"position", target,
-//				"speed", speed));
-			SendMessage("Move", SendMessageOptions.DontRequireReceiver);
-			
-			if ((transform.position - target).magnitude < approxDistance)
-			{
-				GetComponent<Rigidbody>().velocity = Vector3.zero;
-				keepTarget = false;
-				SendMessage("Idle", SendMessageOptions.DontRequireReceiver);
-			}
+			HeadTo(target);
+			CheckIfTargetReached();
 		}
 		else if(Input.GetMouseButtonUp(0))
 		{
@@ -73,11 +44,13 @@ public class FollowMouse : MonoBehaviour {
 		}
 		else
 		{
-			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			StopShip();
 		}
 #else
 
-		if(Input.touchCount > 0)
+		if(Input.touchCount > 1)
+			StopShip();
+		else if(Input.touchCount == 1)
 		{
 			if(Input.touches[0].phase == TouchPhase.Ended)
 			{
@@ -86,48 +59,55 @@ public class FollowMouse : MonoBehaviour {
 			else
 			{
 				Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.touches[0].position.x, Input.touches[0].position.y, -Camera.main.transform.position.z));
+				HeadTo(worldPoint);
 				target = worldPoint;
-				float dir = 0f;
-				if(worldPoint.x > transform.position.x)
-					dir = 1f;
-				else if(worldPoint.x < transform.position.x)
-					dir = -1f;
-				if (handleScaleOrientation && dir != 0f)
-				{
-					Vector3 scale = transform.localScale;
-					scale.x = dir;
-					transform.localScale = scale;
-				}
-				iTween.MoveUpdate(gameObject, iTween.Hash(
-					"position", worldPoint,
-					"speed", speed));
-				SendMessage("Move", SendMessageOptions.DontRequireReceiver);
 			}
 		}
 		else if (keepTarget)
 		{
-			float dir = 0f;
-			if(target.x > transform.position.x)
-				dir = 1f;
-			else if(target.x < transform.position.x)
-				dir = -1f;
-			if (handleScaleOrientation && dir != 0f)
-			{
-				Vector3 scale = transform.localScale;
-				scale.x = dir;
-				transform.localScale = scale;
-			}
-			iTween.MoveUpdate(gameObject, iTween.Hash(
-				"position", target,
-				"speed", speed));
-			SendMessage("Move", SendMessageOptions.DontRequireReceiver);
-			
-			if (transform.position == target)
-			{
-				keepTarget = false;
-				SendMessage("Idle", SendMessageOptions.DontRequireReceiver);
-			}
+			HeadTo(target);
+			CheckIfTargetReached();
+		}
+		else
+		{
+			StopShip();
 		}
 #endif
 	}
+
+	void CheckIfTargetReached()
+	{
+		if (HasReachedTarget())
+		{
+			StopShip();
+		}
+	}
+
+	bool HasReachedTarget()
+	{
+		return (transform.position - target).magnitude < approxDistance;
+	}
+
+	void StopShip()
+	{
+		GetComponent<Rigidbody>().velocity = Vector3.zero;
+		keepTarget = false;
+		SendMessage("Idle", SendMessageOptions.DontRequireReceiver);
+		moving = false;
+	}
+
+	void HeadTo(Vector3 tgt)
+	{
+		float dir = Mathf.Sign(tgt.x - transform.position.x);
+		if (dir != 0f)
+		{
+			Vector3 scale = transform.localScale;
+			scale.x = dir * Mathf.Abs(scale.x);
+			transform.localScale = scale;
+		}
+		GetComponent<Rigidbody>().velocity = (tgt - transform.position) * speed;
+		SendMessage("Move", SendMessageOptions.DontRequireReceiver);
+		moving = true;
+	}
+
 }

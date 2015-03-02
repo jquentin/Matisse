@@ -19,7 +19,7 @@ public class CameraSizer : MonoBehaviour {
 		camera = GetComponent<Camera>();
 	}
 
-	void Update () 
+	void LateUpdate () 
 	{
 		float targetSize = Mathf.Max (sizeMin, Mathf.Min( sizeMax, (target.velocity.magnitude - speedMin) / (speedMax - speedMin) * (sizeMax - sizeMin) + sizeMin));
 		bool zoomIn = targetSize < camera.orthographicSize; 

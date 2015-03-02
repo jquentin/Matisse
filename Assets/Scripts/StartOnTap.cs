@@ -28,7 +28,7 @@ public class StartOnTap : MonoBehaviour {
 			character.GetComponent<FollowMouse>().enabled = false;
 			GetComponent<CameraDragger>().enabled = false;
 			GetComponent<CameraSizer>().enabled = false;
-			Time.timeScale = 0f;
+			Time.timeScale = 0.2f;
 			character.SetActive(false);
 			PositionTweenable.Get(gameObject).TweenXYPosition(Vector2.zero, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
 			SizeTweenable.Get(gameObject).TweenSize(sizeCamView, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
@@ -91,7 +91,7 @@ public class StartOnTap : MonoBehaviour {
 		if (Time.realtimeSinceStartup >= timeStopTransitioning)
 			transitioning = false;
 
-		if (currentState == State.View && (Input.touchCount > 0 || Input.GetMouseButtonDown(0)))
+		if (currentState == State.View && (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetMouseButtonUp(0)))
 		{
 			SetState(State.Play);
 		}
@@ -101,7 +101,7 @@ public class StartOnTap : MonoBehaviour {
 	{
 		if (currentState == State.Play)
 		{
-			SetState(State.View, 3f);
+			SetState(State.View, 2f);
 		}
 	}
 

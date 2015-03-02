@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 2e45c38072a8a44f7b607ff29cb05f28
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - boingSnd: {fileID: 8300000, guid: 1f907f45bfd6e475a9156798cf686717, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

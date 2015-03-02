@@ -5,7 +5,7 @@ public class LevelButton : MonoBehaviour {
 
 	public int level;
 
-	IEnumerator OnMouseDown () 
+	public IEnumerator OnMouseDown () 
 	{
 		transform.position = new Vector3(transform.position.x, transform.position.y, -1f);
 		ScaleTweenable st = ScaleTweenable.Get(gameObject);
