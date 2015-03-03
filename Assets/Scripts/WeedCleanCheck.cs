@@ -7,13 +7,27 @@ public class WeedCleanCheck : MonoBehaviour {
 
 	public List<Sortable> weeds = new List<Sortable>();
 	Dictionary<int, List<Sortable>> weedsByColor;
+	Dictionary<int, bool> groupsSortStates;
 	public float maxDist = 1f;
+	private float _sqrMaxDist;
 	private bool hasSucceed = false;
 	public GameObject textEnd;
+
+	public delegate void OnSortedHandler(int id, bool sorted);
+	public static OnSortedHandler OnSorted;
+
+	void Awake()
+	{
+		_sqrMaxDist = maxDist * maxDist;
+	}
 
 	void Start()
 	{
 		textEnd.SetActive(false);
+		groupsSortStates = new Dictionary<int, bool>();
+		foreach(Sortable w in weeds)
+			if(!groupsSortStates.ContainsKey(w.sortId))
+				groupsSortStates.Add(w.sortId, false);
 		weedsByColor = new Dictionary<int, List<Sortable>>();
 		foreach(Sortable w in weeds)
 		{
@@ -35,29 +49,58 @@ public class WeedCleanCheck : MonoBehaviour {
 		}
 		else
 		{
-			foreach(List<Sortable> c in weedsByColor.Values)
+			info = "Max Dist : " + maxDist + "\n";
+//			foreach(List<Sortable> c in weedsByColor.Values)
+//			{
+//				if(ExistsTooFar(c))
+//					return;
+//			}
+			bool fail = false;
+			foreach(int id in weedsByColor.Keys)
 			{
-				if(ExistsTooFar(c))
-					return;
+				List<Sortable> sameId = weedsByColor[id];
+				info += "furthest in " + id + " : ";
+				bool sorted = IsSorted(sameId);
+				if (!sorted)
+					fail = true;
+				if (sorted != groupsSortStates[id])
+				{
+					groupsSortStates[id] = sorted;
+					OnSorted(id, sorted);
+				}
 			}
-			Success();
+			if (!fail)
+				Success();
 		}
 	}
 
-	bool ExistsTooFar(List<Sortable> weeds)
+	bool IsSorted(List<Sortable> weeds)
 	{
+		float furthest = 0f;
+		bool existsTooFar = false;
 		for (int i = 0 ; i < weeds.Count ; i++)
 		{
+			float closest = float.MaxValue;
 			bool existsCloseOne = false;
 			for (int j = 0 ; j < weeds.Count ; j++)
 			{
-				if (i != j && (weeds[i].transform.position - weeds[j].transform.position).magnitude <= maxDist)
-					existsCloseOne = true;
+				if (i != j)
+				{
+					float sqrMag = (weeds[i].transform.position - weeds[j].transform.position).sqrMagnitude;
+					closest = Mathf.Min(closest, sqrMag);
+					if (sqrMag <= _sqrMaxDist)
+					{
+						existsCloseOne = true;
+					}
+				}
 			}
+			
+			furthest = Mathf.Max(furthest, closest);
 			if (!existsCloseOne)
-				return true;
+				existsTooFar = true;
 		}
-		return false;
+		info += Mathf.Sqrt(furthest) + "\n";
+		return !existsTooFar;
 	}
 
 	void Success()
@@ -78,5 +121,12 @@ public class WeedCleanCheck : MonoBehaviour {
 	{
 		weeds.Clear();
 		weeds.AddRange(GetComponentsInChildren<Sortable>());
+	}
+
+	private string info = "";
+	void OnGUI()
+	{
+		GUI.color = Color.black;
+		GUI.Label(new Rect(Screen.width * 0.15f, 10f, 200f, 100f), info);
 	}
 }
