@@ -3,9 +3,9 @@ using System.Collections;
 
 public class Weed : Sortable{
 
-	public enum Color { Red, Orange, Blue, Green, Pink } 
+	public enum WeedColor { Red, Orange, Blue, Green, Pink } 
 
-	public Weed.Color color;
+	public WeedColor color;
 
 	public override int sortId
 	{
@@ -13,5 +13,11 @@ public class Weed : Sortable{
 		{
 			return (int)color;
 		}
+	}
+	
+	protected override void HandleOnSorted(int id, bool sorted)
+	{
+		if (sortId == id)
+			GetComponent<SpriteRenderer>().color = (sorted ? Color.green : Color.white);
 	}
 }

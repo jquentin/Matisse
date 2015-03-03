@@ -8,4 +8,11 @@ public abstract class Sortable : MonoBehaviour{
 		get;
 	}
 
+	protected virtual void Awake()
+	{
+		WeedCleanCheck.OnSorted += HandleOnSorted;
+	}
+
+	protected abstract void HandleOnSorted(int id, bool sorted);
+
 }
