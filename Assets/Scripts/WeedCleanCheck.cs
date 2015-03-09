@@ -2,8 +2,19 @@
 using System.Collections.Generic;
 
 public class WeedCleanCheck : MonoBehaviour {
-
-	public GameObject character;
+	
+	private static WeedCleanCheck _instance;
+	public static WeedCleanCheck instance
+	{
+		get
+		{
+			if (_instance == null)
+			{
+				_instance = FindObjectOfType<WeedCleanCheck>();
+			}
+			return _instance;
+		}
+	}
 
 	public List<Sortable> weeds = new List<Sortable>();
 	Dictionary<int, List<Sortable>> weedsByColor;
@@ -11,10 +22,12 @@ public class WeedCleanCheck : MonoBehaviour {
 	public float maxDist = 1f;
 	private float _sqrMaxDist;
 	private bool hasSucceed = false;
-	public GameObject textEnd;
 
 	public delegate void OnSortedHandler(int id, bool sorted);
 	public static OnSortedHandler OnSorted;
+	
+	public delegate void OnCompleteHandler();
+	public OnCompleteHandler OnComplete;
 
 	void Awake()
 	{
@@ -23,7 +36,6 @@ public class WeedCleanCheck : MonoBehaviour {
 
 	void Start()
 	{
-		textEnd.SetActive(false);
 		groupsSortStates = new Dictionary<int, bool>();
 		foreach(Sortable w in weeds)
 			if(!groupsSortStates.ContainsKey(w.sortId))
@@ -106,9 +118,8 @@ public class WeedCleanCheck : MonoBehaviour {
 	void Success()
 	{
 		hasSucceed = true;
-		StartOnTap.instance.SetState(StartOnTap.State.View);
-		StartOnTap.instance.EndGame();
-		textEnd.SetActive(true);
+		if (OnComplete != null)
+			OnComplete();
 	}
 
 	void UpdateCameraSize(float value)

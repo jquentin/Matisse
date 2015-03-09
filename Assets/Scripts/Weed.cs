@@ -17,7 +17,7 @@ public class Weed : Sortable{
 	
 	protected override void HandleOnSorted(int id, bool sorted)
 	{
-		if (sortId == id)
-			GetComponent<SpriteRenderer>().color = (sorted ? Color.green : Color.white);
+//		if (sortId == id)
+//			GetComponent<SpriteRenderer>().color = (sorted ? Color.green : Color.white);
 	}
 }

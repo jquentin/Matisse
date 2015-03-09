@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StartOnTap : MonoBehaviour {
+public class StateManager : MonoBehaviour {
 
-	private static StartOnTap _instance;
-	public static StartOnTap instance
+	private static StateManager _instance;
+	public static StateManager instance
 	{
 		get
 		{
 			if (_instance == null)
 			{
-				_instance = FindObjectOfType<StartOnTap>();
+				_instance = FindObjectOfType<StateManager>();
 			}
 			return _instance;
 		}
@@ -18,6 +18,8 @@ public class StartOnTap : MonoBehaviour {
 
 	public enum State { View, Play }
 	public State currentState { get; private set; }
+	public delegate void OnStateChangedHandler(State state);
+	public OnStateChangedHandler OnStateChanged;
 
 	public void SetState(State value, float timeCamTransition = 6f, bool forced = false)
 	{
@@ -28,12 +30,10 @@ public class StartOnTap : MonoBehaviour {
 			character.GetComponent<FollowMouse>().enabled = false;
 			GetComponent<CameraDragger>().enabled = false;
 			GetComponent<CameraSizer>().enabled = false;
-			Time.timeScale = 0.2f;
+			Time.timeScale = 0f;
 			character.SetActive(false);
 			PositionTweenable.Get(gameObject).TweenXYPosition(Vector2.zero, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
 			SizeTweenable.Get(gameObject).TweenSize(sizeCamView, timeCamTransition, 0f, iTween.EaseType.easeInOutCubic);
-			viewButton.gameObject.SetActive(false);
-			menuButton.gameObject.SetActive(true);
 		}
 		else if (value == State.Play)
 		{
@@ -44,19 +44,16 @@ public class StartOnTap : MonoBehaviour {
 			GetComponent<CameraSizer>().enabled = true;
 			character.SetActive(true);
 			character.GetComponent<FollowMouse>().enabled = true;
-			viewButton.gameObject.SetActive(true);
-			menuButton.gameObject.SetActive(false);
-			introText.SetActive(false);
 		}
+		if (OnStateChanged != null)
+			OnStateChanged(value);
 		currentState = value;
 		transitioning = true;
 		timeStopTransitioning = Time.realtimeSinceStartup + timeTransitioning;
 	}
 
 	public float sizeCamView = 7.2f;
-	public GameObject character;
-	public Clickable viewButton;
-	public Clickable menuButton;
+	private GameObject character;
 	private bool _transitioning = false;
 	public bool transitioning
 	{
@@ -74,20 +71,18 @@ public class StartOnTap : MonoBehaviour {
 
 	private float origTimeScale;
 
-	public GameObject introText;
 	private bool gameEnded = false;
 
 	void Awake()
 	{
 		origTimeScale = Time.timeScale;
-		viewButton.OnClick += HandleOnClickViewButton;
-		menuButton.OnClick += HandleOnClickMenuButton;
+		WeedCleanCheck.instance.OnComplete += EndGame;
+		character = GameObject.FindWithTag("Player");
 	}
 
 	void Start () 
 	{
 		SetState(State.View, 0f, true);
-		ScaleTweenable.Get(introText).TweenScaleFrom(1.5f, 0.1f, 2f, 0f, iTween.EaseType.easeInQuad);
 	}
 
 	void Update () 
@@ -105,21 +100,9 @@ public class StartOnTap : MonoBehaviour {
 		}
 	}
 
-	void HandleOnClickViewButton()
-	{
-		if (currentState == State.Play)
-		{
-			SetState(State.View, 2f);
-		}
-	}
-
-	void HandleOnClickMenuButton()
-	{
-		Application.LoadLevel("title");
-	}
-
 	public void EndGame()
 	{
+		SetState(StateManager.State.View);
 		gameEnded = true;
 	}
 

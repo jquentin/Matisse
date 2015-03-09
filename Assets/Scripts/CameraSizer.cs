@@ -3,7 +3,8 @@ using System.Collections;
 
 [RequireComponent(typeof(Camera))]
 public class CameraSizer : MonoBehaviour {
-
+	
+	public bool targetPlayer = false;
 	public Rigidbody target;
 	public float sizeMin = 0.8f;
 	public float sizeMax = 1.3f;
@@ -17,6 +18,8 @@ public class CameraSizer : MonoBehaviour {
 	void Awake()
 	{
 		camera = GetComponent<Camera>();
+		if (targetPlayer)
+			target = GameObject.FindWithTag("Player").GetComponent<Rigidbody>();
 	}
 
 	void LateUpdate () 
