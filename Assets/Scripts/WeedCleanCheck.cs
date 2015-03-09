@@ -94,6 +94,8 @@ public class WeedCleanCheck : MonoBehaviour {
 		{
 			float closest = float.MaxValue;
 			bool existsCloseOne = false;
+			if (weeds.Count == 1)
+				existsCloseOne = true;
 			for (int j = 0 ; j < weeds.Count ; j++)
 			{
 				if (i != j)
