@@ -5,6 +5,11 @@ public class MenuManager : MonoBehaviour {
 
 	private string sceneToLoad = "";
 
+	void Start()
+	{
+		Time.timeScale = 1f;
+	}
+
 	public void GoToScene(string scene) 
 	{
 		sceneToLoad = scene;
