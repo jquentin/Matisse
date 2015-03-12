@@ -13,16 +13,22 @@ public class MenuManager : MonoBehaviour {
 
 	public void GoToScene(string scene) 
 	{
-		sceneToLoad = scene;
-		Invoke("LoadScene", 1f);
+#if UNITY_PRO_LICENSE
 		op = Application.LoadLevelAsync(sceneToLoad);
 		op.allowSceneActivation = false;
-//		Application.LoadLevel(scene);
+#else
+		sceneToLoad = scene;
+#endif
+		Invoke("LoadScene", 1f);
 	}
 
 	void LoadScene()
 	{
+#if UNITY_PRO_LICENSE
 		op.allowSceneActivation = true;
+#else
+		Application.LoadLevel(sceneToLoad);
+#endif
 	}
 
 }
