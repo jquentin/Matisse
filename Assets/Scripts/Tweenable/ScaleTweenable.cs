@@ -47,4 +47,14 @@ public class ScaleTweenable : GettableComponent <ScaleTweenable> {
 			"ignoretimescale", ignoreTimeScale,
 			"easetype", defaultEaseType));
 	}
+
+	public void Punch(float amount, float time, float delay = 0f, iTween.EaseType easeType = iTween.EaseType.easeOutExpo)
+	{
+		iTween.PunchScale(gameObject, iTween.Hash(
+			"amount", Vector3.one * amount,
+			"time", time,
+			"delay", delay,
+			"ignoretimescale", ignoreTimeScale,
+			"easetype", easeType));
+	}
 }
