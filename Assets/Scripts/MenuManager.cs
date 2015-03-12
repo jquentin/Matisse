@@ -4,6 +4,7 @@ using System.Collections;
 public class MenuManager : MonoBehaviour {
 
 	private string sceneToLoad = "";
+	AsyncOperation op;
 
 	void Start()
 	{
@@ -13,13 +14,15 @@ public class MenuManager : MonoBehaviour {
 	public void GoToScene(string scene) 
 	{
 		sceneToLoad = scene;
-		Invoke("LoadScene", 0.5f);
+		Invoke("LoadScene", 1f);
+		op = Application.LoadLevelAsync(sceneToLoad);
+		op.allowSceneActivation = false;
 //		Application.LoadLevel(scene);
 	}
 
 	void LoadScene()
 	{
-		Application.LoadLevel(sceneToLoad);
+		op.allowSceneActivation = true;
 	}
 
 }
