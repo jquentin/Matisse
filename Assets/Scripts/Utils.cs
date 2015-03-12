@@ -68,14 +68,15 @@ public static class Utils
 		return res;
 	}
 
-	public static List<GameObject> FindChildrenGameObjects(this Transform root, string name) {
+	public static List<GameObject> FindChildrenGameObjects(this Transform root, string name = "", bool recursive = true) {
 		List<GameObject> res = new List<GameObject>();
 		for(int i = 0 ; i < root.childCount ; i++)
 		{
 			Transform t = root.GetChild(i);
 			if (t.name.Contains(name))
 				res.Add(t.gameObject);
-			res.AddRange(t.FindChildrenGameObjects(name));
+			if (recursive)
+				res.AddRange(t.FindChildrenGameObjects(name));
 		}
 		return res;
 	}
