@@ -14,7 +14,7 @@ public class MenuManager : MonoBehaviour {
 	public void GoToScene(string scene) 
 	{
 #if UNITY_PRO_LICENSE
-		op = Application.LoadLevelAsync(sceneToLoad);
+		op = Application.LoadLevelAsync(scene);
 		op.allowSceneActivation = false;
 #else
 		sceneToLoad = scene;
