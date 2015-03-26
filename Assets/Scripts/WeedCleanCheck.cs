@@ -121,15 +121,19 @@ public class WeedCleanCheck : MonoBehaviour {
 
 	float Distance(Transform a, Transform b)
 	{
-//		RaycastHit hitInfoAB;
-//		RaycastHit hitInfoBA;
-//		Physics.Raycast(new Ray(a.position, b.position - a.position), out hitInfoAB);
-//		Physics.Raycast(new Ray(b.position, a.position - b.position), out hitInfoBA);
+		RaycastHit[] hitInfoAB = Physics.RaycastAll(new Ray(a.position, b.position - a.position));
+		float distAB = float.MaxValue;
+		foreach (RaycastHit rh in hitInfoAB)
+			if (rh.transform.IsChildOf(b))
+				distAB = rh.distance;
+		RaycastHit[] hitInfoBA = Physics.RaycastAll(new Ray(b.position, a.position - b.position));
+		float distBA = float.MaxValue;
+		foreach (RaycastHit rh in hitInfoBA)
+			if (rh.transform.IsChildOf(a))
+				distBA = rh.distance;
 		float dist = (a.position - b.position).magnitude;
-//		float distAB = hitInfoAB.distance;
-//		float distBA = hitInfoBA.distance;
-//		float dist2 = (distAB + distBA - dist) * 0.5f;
-		return dist;
+		float dist2 = (distAB + distBA - dist) * 0.5f;
+		return dist2;
 	}
 
 	void Fusion (int a, int b, List<List<int>> list, List<int> dic)
