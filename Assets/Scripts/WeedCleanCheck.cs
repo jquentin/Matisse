@@ -71,7 +71,7 @@ public class WeedCleanCheck : MonoBehaviour {
 			foreach(int id in weedsByColor.Keys)
 			{
 				List<Sortable> sameId = weedsByColor[id];
-				info += "furthest in " + id + " : ";
+				info += "clusters in " + id + " : ";
 				bool sorted = IsSorted(sameId);
 				if (!sorted)
 					fail = true;
@@ -86,35 +86,66 @@ public class WeedCleanCheck : MonoBehaviour {
 		}
 	}
 
+	int NbClusters(List<Sortable> weeds)
+	{
+		int count = weeds.Count;
+		//List of clusters, starts with each object separated, progressively grouped together
+		List<List<int>> clusters = new List<List<int>>(count);
+		//Dictionary of indexes, to store where in the cluster list each object is.
+		List<int> dictIndex = new List<int>(count);
+		for (int i = 0 ; i < count ; i++)
+		{
+			clusters.Insert(i, new List<int>(count) { i });
+			dictIndex.Insert(i, i);
+		}
+		
+		for (int i = 0 ; i < count - 1 ; i++)
+		{
+			for (int j = i + 1 ; j < count ; j++)
+			{
+				float dist = Distance(weeds[i].transform, weeds[j].transform);
+				if (dist <= maxDist)
+					Fusion(i, j, clusters, dictIndex);
+			}
+		}
+		
+		int nbClusters = clusters.FindAll(delegate(List<int> obj) {return obj != null; }).Count;
+		info += nbClusters + " / " + clusters.Count + "\n";
+		return nbClusters;
+	}
+
 	bool IsSorted(List<Sortable> weeds)
 	{
-		float furthest = 0f;
-		bool existsTooFar = false;
-		for (int i = 0 ; i < weeds.Count ; i++)
-		{
-			float closest = float.MaxValue;
-			bool existsCloseOne = false;
-			if (weeds.Count == 1)
-				existsCloseOne = true;
-			for (int j = 0 ; j < weeds.Count ; j++)
-			{
-				if (i != j)
-				{
-					float sqrMag = (weeds[i].transform.position - weeds[j].transform.position).sqrMagnitude;
-					closest = Mathf.Min(closest, sqrMag);
-					if (sqrMag <= _sqrMaxDist)
-					{
-						existsCloseOne = true;
-					}
-				}
-			}
-			
-			furthest = Mathf.Max(furthest, closest);
-			if (!existsCloseOne)
-				existsTooFar = true;
-		}
-		info += Mathf.Sqrt(furthest) + "\n";
-		return !existsTooFar;
+		return NbClusters(weeds) == 1;
+	}
+
+	float Distance(Transform a, Transform b)
+	{
+//		RaycastHit hitInfoAB;
+//		RaycastHit hitInfoBA;
+//		Physics.Raycast(new Ray(a.position, b.position - a.position), out hitInfoAB);
+//		Physics.Raycast(new Ray(b.position, a.position - b.position), out hitInfoBA);
+		float dist = (a.position - b.position).magnitude;
+//		float distAB = hitInfoAB.distance;
+//		float distBA = hitInfoBA.distance;
+//		float dist2 = (distAB + distBA - dist) * 0.5f;
+		return dist;
+	}
+
+	void Fusion (int a, int b, List<List<int>> list, List<int> dic)
+	{
+		int setA = dic[a];
+		int setB = dic[b];
+		// If the objects are already in the same set, do nothing
+		if (setA == setB)
+			return;
+		// To fusion, add object b's set to object a's set
+		list[setA].AddRange(list[setB]);
+		// And tell the index dictionary that the objects in the object b's set are at the same index as the object a
+		foreach(int i in list[setB])
+			dic[i] = setA;
+		// don't remove the old unused object b's set, as the indexes need to stay the same in the list. Empty it instead.
+		list[setB] = null;
 	}
 
 	void Success()
